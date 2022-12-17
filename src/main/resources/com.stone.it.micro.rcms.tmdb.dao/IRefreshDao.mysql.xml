@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stone.it.micro.rcms.tmdb.dao.IRefreshDao">
+
+    <select id="findResourceExists" resultType="com.stone.it.micro.rcms.tmdb.vo.TmdbVO">
+        select
+            resource_name as resourceName,
+            resource_id as resourceId,
+            tmdb_id as tmdbId
+        from tpl_mv_resource_t
+        where resource_name = #{fileName}
+        and setting_id = #{settingId}
+        and media_type = #{fileType}
+    </select>
+
+    <select id="findNotMatchData" resultType="com.stone.it.micro.rcms.tmdb.vo.TmdbVO">
+        select
+        resource_name as resourceName,
+        resource_id as resourceId,
+        media_type
+        from tpl_mv_resource_t
+        where tmdb_id is null
+        and refresh_id != #{refreshId}
+        LIMIT #{startIndex},
+        #{pageSize};
+    </select>
+
+    <insert id="createResource">
+        insert into
+        tpl_mv_resource_t
+        (resource_id,
+         resource_name,
+         resource_path,
+         media_type,
+         refresh_id,
+         resource_info,
+         setting_id)
+        values
+        (#{fileId},
+         #{fileName},
+         #{filePath},
+         #{fileType},
+         #{refreshId},
+         #{fileInfo},
+         #{settingId})
+    </insert>
+
+    <update id="updateResource">
+        update tpl_mv_resource_t
+        set refresh_id = #{refreshId},
+        tmdb_id =  #{tmdbId}
+        where resource_id = #{fileId}
+    </update>
+
+    <delete id="deleteResource">
+        delete from tpl_mv_resource_t
+        where refresh_id != #{refreshId}
+    </delete>
+
+    <select id="findTmdbInfoById" resultType="com.stone.it.micro.rcms.tmdb.vo.TmdbVO">
+        select tmdb_id as tmdbId from tpl_mv_tmdb_info_t
+        where tmdb_id = #{tmdbId}
+    </select>
+
+    <insert id="createDetailResource">
+        INSERT INTO
+        tpl_mv_tmdb_info_t
+        ( tmdb_id,
+          LANGUAGE,
+          is_confirm,
+          title,
+          resource_data,
+          release_date,
+          production_countries,
+          genres,
+          include_adult,
+          media_type
+        )
+        VALUES
+        (
+        #{tmdbId},
+        #{language},
+        #{isConfirm},
+        #{title},
+        #{resourceData},
+        #{release_date},
+        #{production_countries},
+        #{genres},
+        #{include_adult},
+        #{media_type}
+        );
+    </insert>
+    <update id="updateDetailResource">
+
+    </update>
+    <delete id="deleteDetailResource">
+
+    </delete>
+
+
+    <select id="getResourceById" resultType="com.stone.it.micro.rcms.tmdb.vo.TmdbVO">
+
+    </select>
+
+</mapper>
