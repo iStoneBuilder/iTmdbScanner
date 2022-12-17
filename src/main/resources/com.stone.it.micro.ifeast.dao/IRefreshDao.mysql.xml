@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stone.it.micro.ifeast.dao.IRefreshDao">
+
+    <select id="findFileExist" resultType="com.stone.it.micro.ifeast.vo.FileInfoVO">
+        select
+            resource_name as fileName,
+            resource_id as fileId,
+            tmdb_id as tmdbId
+        from tpl_mv_resource_t
+        where resource_name = #{fileName}
+        and setting_id = #{settingId}
+        and media_type = #{fileType}
+    </select>
+
+    <insert id="createFileInfo">
+        insert into
+        tpl_mv_resource_t
+        (resource_id,
+         resource_name,
+         resource_path,
+         media_type,
+         refresh_id,
+         resource_info,
+         setting_id)
+        values
+        (#{fileId},
+         #{fileName},
+         #{filePath},
+         #{fileType},
+         #{refreshId},
+         #{fileInfo},
+         #{settingId})
+    </insert>
+
+    <update id="updateFileInfo">
+        update tpl_mv_resource_t
+        set refresh_id = #{refreshId},
+        tmdb_id =  #{tmdbId}
+        where resource_id = #{fileId}
+    </update>
+
+    <delete id="deleteFileInfo">
+        delete from tpl_mv_resource_t
+        where refresh_id != #{refreshId}
+        and setting_id = #{settingId}
+    </delete>
+
+    <select id="findNotMatchData" resultType="com.stone.it.micro.ifeast.vo.FileInfoVO">
+        select
+        resource_name as fileName,
+        resource_id as fileId,
+        media_type as fileType,
+        tmdb_id as tmdbId
+        from tpl_mv_resource_t
+        where tmdb_id is null
+        and refresh_id != #{refreshId}
+        LIMIT 1,20
+    </select>
+
+    <insert id="createFileMeta">
+        INSERT INTO
+        tpl_mv_tmdb_info_t
+        ( tmdb_id,
+          LANGUAGE,
+          title,
+          resource_data,
+          release_date,
+          production_countries,
+          genres,
+          include_adult,
+          media_type
+        )
+        VALUES
+        (
+        #{tmdbId},
+        #{language},
+        #{title},
+        #{resourceData},
+        #{releaseDate},
+        #{regions},
+        #{genres},
+        #{adult},
+        #{mediaType}
+        );
+    </insert>
+
+    <update id="updateFileMeta">
+    </update>
+
+    <delete id="deleteFileMeta">
+    </delete>
+
+</mapper>
